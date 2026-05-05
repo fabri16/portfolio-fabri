@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabrizio Graziano — Graphic & UX/UI Designer</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #0C0C0C;
+      color: #F0F0F0;
+      font-family: "Kanit", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Keyframes */
+    @keyframes floatA {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-14px) rotate(2deg); }
+    }
+    @keyframes floatB {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(-2deg); }
+    }
+    @keyframes floatC {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-8px) rotate(1deg); }
+      66% { transform: translateY(-16px) rotate(-1deg); }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.2); }
+    }
+    @keyframes marqueeL {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-33.333%); }
+    }
+    @keyframes marqueeR {
+      0% { transform: translateX(-33.333%); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Responsive nav */
+    @media (max-width: 768px) {
+      .nav-links { display: none !important; }
+      .nav-hamburger { display: flex !important; }
+    }
+
+    /* Global responsive helpers */
+    @media (max-width: 768px) {
+      section {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0C0C0C; }
+    ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.4); border-radius: 2px; }
+
+    /* Selection */
+    ::selection { background: rgba(124,58,237,0.3); color: #fff; }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<!-- Components -->
+<script type="text/babel" src="components/nav.jsx"></script>
+<script type="text/babel" src="components/hero.jsx"></script>
+<script type="text/babel" src="components/marquee-section.jsx"></script>
+<script type="text/babel" src="components/about.jsx"></script>
+<script type="text/babel" src="components/education.jsx"></script>
+<script type="text/babel" src="components/services.jsx"></script>
+<script type="text/babel" src="components/projects.jsx"></script>
+
+<!-- Contact + Footer + App root -->
+<script type="text/babel">
+  const { useState, useEffect } = React;
+
+  // Global project detail overlay — mounted at App level so it covers everything
+  function ProjectDetailOverlay({ project, onClose }) {
+    const [activeImg, setActiveImg] = useState(0);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+      const check = () => setIsMobile(window.innerWidth < 768);
+      window.addEventListener("resize", check);
+      // Lock body scroll while overlay is open
+      document.body.style.overflow = "hidden";
+      return () => {
+        window.removeEventListener("resize", check);
+        document.body.style.overflow = "";
+      };
+    }, []);
+
+    // Close on Escape
+    useEffect(() => {
+      const onKey = (e) => { if (e.key === "Escape") onClose(); };
+      window.addEventListener("keydown", onKey);
+      return () => window.removeEventListener("keydown", onKey);
+    }, [onClose]);
+
+    return (
+      <div style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        background: "#0C0C0C",
+        overflowY: "auto",
+        overflowX: "hidden",
+      }}>
+        {/* Grain */}
+        <svg style={{ position: "fixed", inset: 0, width: "100%", height: "100%", opacity: 0.1, pointerEvents: "none", zIndex: 0 }}>
+          <filter id="grainOv"><feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch" /><feColorMatrix type="saturate" values="0" /></filter>
+          <rect width="100%" height="100%" filter="url(#grainOv)" />
+        </svg>
+        <div style={{ position: "fixed", top: "15%", left: "50%", transform: "translateX(-50%)", width: 600, height: 600, background: `radial-gradient(circle, ${project.accent}18 0%, transparent 70%)`, pointerEvents: "none", zIndex: 0 }} />
+
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 1100, margin: "0 auto", padding: isMobile ? "80px 20px 80px" : "100px 40px 100px" }}>
+          {/* Back button */}
+          <button
+            onClick={onClose}
+            style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: "none", border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 100, padding: "10px 22px", cursor: "pointer",
+              fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 13,
+              color: "rgba(255,255,255,0.55)", letterSpacing: "0.1em",
+              textTransform: "uppercase", marginBottom: 48, transition: "all 0.25s",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.color = "#fff"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.55)"; }}
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M10 7H2M6 2L1 7l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Volver a Proyectos
+          </button>
+
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 24, marginBottom: 48 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
+                <span style={{ fontFamily: "Kanit, sans-serif", fontWeight: 700, fontSize: 12, color: project.accent, letterSpacing: "0.2em" }}>{project.num}</span>
+                <div style={{ width: 40, height: 1, background: `${project.accent}60` }} />
+                <span style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 12, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>{project.year}</span>
+              </div>
+              <h1 style={{ fontFamily: "Kanit, sans-serif", fontWeight: 900, fontSize: "clamp(42px, 7vw, 110px)", lineHeight: 0.9, letterSpacing: "-0.02em", color: "#fff", marginBottom: 16 }}>
+                {project.title}
+              </h1>
+              <div style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 14, color: "rgba(255,255,255,0.35)", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                {project.category}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", paddingTop: 8 }}>
+              {project.palette.map((c, i) => (
+                <div key={i} style={{ width: 24, height: 24, borderRadius: "50%", background: c, border: "1px solid rgba(255,255,255,0.1)" }} />
+              ))}
+            </div>
+          </div>
+
+          {/* Main image */}
+          <div style={{
+            borderRadius: 24, overflow: "hidden",
+            background: project.cardBg || "#141414",
+            border: `1px solid ${project.accent}20`,
+            marginBottom: 16, width: "100%",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            minHeight: isMobile ? 240 : 420,
+          }}>
+            <img
+              src={project.images[activeImg]}
+              alt={project.title}
+              style={{ maxWidth: "100%", maxHeight: isMobile ? 360 : 580, objectFit: "contain", display: "block" }}
+            />
+          </div>
+
+          {/* Thumbnails */}
+          {project.images.length > 1 && (
+            <div style={{ display: "flex", gap: 10, marginBottom: 56, flexWrap: "wrap" }}>
+              {project.images.map((img, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveImg(i)}
+                  style={{
+                    width: isMobile ? 56 : 72, height: isMobile ? 44 : 56,
+                    borderRadius: 10, overflow: "hidden",
+                    border: `2px solid ${i === activeImg ? project.accent : "rgba(255,255,255,0.08)"}`,
+                    cursor: "pointer", transition: "border-color 0.2s",
+                    flexShrink: 0, background: project.cardBg || "#141414",
+                  }}
+                >
+                  <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Description */}
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 32 : 64, alignItems: "start" }}>
+            <div>
+              <div style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 11, color: "rgba(255,255,255,0.3)", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 20, display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 24, height: 1, background: `${project.accent}80` }} />
+                Sobre el Proyecto
+              </div>
+              <p style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: "clamp(15px, 1.8vw, 19px)", color: "rgba(255,255,255,0.7)", lineHeight: 1.8 }}>
+                {project.descCompleta}
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingTop: isMobile ? 0 : 40 }}>
+              {[{ label: "Tipo", value: project.category }, { label: "Año", value: project.year }].map(({ label, value }) => (
+                <div key={label} style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", paddingBottom: 20 }}>
+                  <div style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>{label}</div>
+                  <div style={{ fontFamily: "Kanit, sans-serif", fontWeight: 500, fontSize: 16, color: "rgba(255,255,255,0.8)" }}>{value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function Contact() {
+    const { useEffect: useEff, useRef: useRf, useState: useSt } = React;
+    const [form, setForm] = useSt({ name: "", email: "", message: "" });
+    const [sent, setSent] = useSt(false);
+    const [visible, setVisible] = useSt(false);
+    const sectionRef = useRf(null);
+
+    useEff(() => {
+      const observer = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+        { threshold: 0.15 }
+      );
+      if (sectionRef.current) observer.observe(sectionRef.current);
+      return () => observer.disconnect();
+    }, []);
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      setSent(true);
+      setTimeout(() => setSent(false), 4000);
+      setForm({ name: "", email: "", message: "" });
+    };
+
+    const fadeStyle = (delay = 0) => ({
+      opacity: visible ? 1 : 0,
+      transform: visible ? "translateY(0)" : "translateY(28px)",
+      transition: `opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+    });
+
+    return (
+      <section
+        id="contact"
+        ref={sectionRef}
+        style={{
+          background: "#0C0C0C",
+          padding: "140px 40px",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* bg glow */}
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 600, background: "radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+        <div style={{ maxWidth: 700, margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <div style={{ ...fadeStyle(0), fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 12, color: "rgba(255,255,255,0.35)", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 28, height: 1, background: "rgba(124,58,237,0.6)" }} />
+            Contacto
+          </div>
+
+          <h2 style={{ ...fadeStyle(0.1), fontFamily: "Kanit, sans-serif", fontWeight: 900, fontSize: "clamp(48px, 7vw, 96px)", lineHeight: 0.9, letterSpacing: "-0.02em", color: "#fff", marginBottom: 20 }}>
+            TRABAJEMOS<br />
+            <span style={{ background: "linear-gradient(135deg, #7C3AED, #2563EB)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              JUNTOS.
+            </span>
+          </h2>
+
+          <p style={{ ...fadeStyle(0.2), fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 16, color: "rgba(255,255,255,0.45)", lineHeight: 1.7, marginBottom: 56 }}>
+            Abierto a proyectos freelance, colaboraciones y oportunidades full-time. Mandame un mensaje y te respondo en menos de 24h.
+          </p>
+
+          {sent ? (
+            <div style={{ textAlign: "center", padding: "60px 0", animation: "fadeUp 0.5s ease" }}>
+              <div style={{ fontFamily: "Kanit, sans-serif", fontWeight: 700, fontSize: 32, color: "#7C3AED", marginBottom: 12 }}>¡Mensaje enviado ✓</div>
+              <div style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 15, color: "rgba(255,255,255,0.4)" }}>Me pongo en contacto pronto.</div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ ...fadeStyle(0.3), display: "flex", flexDirection: "column", gap: 20 }}>
+              {[
+                { key: "name", label: "Nombre", type: "text", placeholder: "Tu nombre" },
+                { key: "email", label: "Email", type: "email", placeholder: "tu@email.com" },
+              ].map(({ key, label, type, placeholder }) => (
+                <div key={key}>
+                  <label style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 11, color: "rgba(255,255,255,0.3)", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: 8 }}>{label}</label>
+                  <input
+                    type={type}
+                    required
+                    placeholder={placeholder}
+                    value={form[key]}
+                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                    style={{
+                      width: "100%",
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: 12,
+                      padding: "16px 20px",
+                      fontFamily: "Kanit, sans-serif",
+                      fontWeight: 300,
+                      fontSize: 15,
+                      color: "#fff",
+                      outline: "none",
+                      transition: "border-color 0.25s",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = "rgba(124,58,237,0.5)")}
+                    onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
+                  />
+                </div>
+              ))}
+              <div>
+                <label style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 11, color: "rgba(255,255,255,0.3)", letterSpacing: "0.2em", textTransform: "uppercase", display: "block", marginBottom: 8 }}>Mensaje</label>
+                <textarea
+                  required
+                  rows={5}
+                  placeholder="Contame sobre tu proyecto..."
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  style={{
+                    width: "100%",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: 12,
+                    padding: "16px 20px",
+                    fontFamily: "Kanit, sans-serif",
+                    fontWeight: 300,
+                    fontSize: 15,
+                    color: "#fff",
+                    outline: "none",
+                    resize: "vertical",
+                    transition: "border-color 0.25s",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "rgba(124,58,237,0.5)")}
+                  onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.08)")}
+                />
+              </div>
+              <button
+                type="submit"
+                style={{
+                  fontFamily: "Kanit, sans-serif",
+                  fontWeight: 500,
+                  fontSize: 14,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "#fff",
+                  background: "linear-gradient(135deg, #7C3AED, #2563EB)",
+                  border: "none",
+                  borderRadius: 100,
+                  padding: "16px 40px",
+                  cursor: "pointer",
+                  alignSelf: "flex-start",
+                  transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+                  boxShadow: "0 4px 24px rgba(124,58,237,0.35)",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.55)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 24px rgba(124,58,237,0.35)"; }}
+              >
+                Enviar Mensaje →
+              </button>
+            </form>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  function Footer() {
+    return (
+      <footer
+        style={{
+          background: "#0a0a0a",
+          borderTop: "1px solid rgba(255,255,255,0.04)",
+          padding: "40px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 20,
+        }}
+      >
+        <div style={{ fontFamily: "Kanit, sans-serif", fontWeight: 300, fontSize: 13, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em" }}>
+          © 2025 Fabrizio Graziano. Todos los derechos reservados.
+        </div>
+        <div style={{ display: "flex", gap: 28 }}>
+          {[
+            { label: "Instagram", href: "https://www.instagram.com/grazianofabri/" },
+            { label: "Behance", href: "https://www.behance.net/fabrigraziano/projects" },
+            { label: "LinkedIn", href: "https://www.linkedin.com/in/fabrizio-graziano-cardozo-1191a1245" },
+          ].map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "Kanit, sans-serif",
+                fontWeight: 300,
+                fontSize: 12,
+                color: "rgba(255,255,255,0.25)",
+                textDecoration: "none",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => (e.target.style.color = "rgba(255,255,255,0.7)")}
+              onMouseLeave={(e) => (e.target.style.color = "rgba(255,255,255,0.25)")}
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      </footer>
+    );
+  }
+
+  function App() {
+    const [activeProject, setActiveProject] = React.useState(null);
+
+    // Expose setter globally so Projects component can call it
+    React.useEffect(() => {
+      window.__openProject = (project) => setActiveProject(project);
+      window.__closeProject = () => setActiveProject(null);
+    }, []);
+
+    return (
+      <>
+        <Nav />
+        <Hero />
+        <MarqueeSection />
+        <About />
+        <Education />
+        <Services />
+        <Projects />
+        <Contact />
+        <Footer />
+        {activeProject && (
+          <ProjectDetailOverlay
+            project={activeProject}
+            onClose={() => setActiveProject(null)}
+          />
+        )}
+      </>
+    );
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById("root"));
+  root.render(<App />);
+</script>
+
+</body>
+</html>
