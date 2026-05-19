@@ -13,8 +13,9 @@
     }, []);
 
     const links = [
-      { label: "Trabajos", href: "#projects" },
+      { label: "Proyectos", href: "#projects" },
       { label: "Sobre Mí", href: "#about" },
+      { label: "Mis estudios", href: "#education" },
       { label: "Conocimientos", href: "#services" },
     ];
 
