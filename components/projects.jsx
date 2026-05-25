@@ -116,6 +116,27 @@
         "uploads/mockup libro.jpg",
       ],
     },
+    {
+      num: "07",
+      title: "Landing page PDG Industrial",
+      category: "UX/UI Design / Landing Page",
+      year: "2025",
+      descCorta: "Diseño y rediseño de landing page para empresa de soluciones eléctricas industriales, desde research UX hasta implementación.",
+      descCompleta: "El proyecto comenzó con una etapa de research profundo: se realizaron entrevistas a usuarios potenciales (contratistas, ingenieros y responsables de mantenimiento), análisis de la competencia y benchmarking del sector industrial. A partir de los hallazgos, se construyeron user personas y se mapearon los pain points del cliente ideal. Con esa base, se definió la arquitectura de la información y la jerarquía visual aplicando principios de UX Writing para cada sección. Se diseñaron wireframes de baja y alta fidelidad, iterando en base a feedback real. El resultado es una landing page de alto impacto visual —oscura, robusta y con acento naranja— que comunica autoridad técnica, facilita la conversión mediante CTAs estratégicos y presenta el portfolio de tableros con un sistema de filtrado por sector industrial.",
+      accent: "#f97316",
+      palette: ["#0C0C0C", "#f97316", "#ffffff"],
+      gridColors: ["rgba(249,115,22,0.5)", "rgba(249,115,22,0.2)", "rgba(249,115,22,0.4)"],
+      cardBg: "#1a0a00",
+      images: [
+        "uploads/pdg-landing-hero.jpg",
+        "uploads/pdg-landing-quienes.jpg",
+        "uploads/pdg-landing-servicios.jpg",
+        "uploads/pdg-landing-proyectos.jpg",
+        "uploads/pdg-landing-casos.jpg",
+        "uploads/pdg-landing-detalle.jpg",
+        "uploads/pdg-landing-contacto.jpg",
+      ],
+    },
   ];
 
   /* ── Project Card ── */
